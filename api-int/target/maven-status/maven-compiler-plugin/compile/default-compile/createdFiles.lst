@@ -1,0 +1,5 @@
+interfaces/CampaignRepository.class
+models/Product.class
+models/Campaign.class
+interfaces/ProductRepository.class
+exceptions/ProductsNotFoundException.class
