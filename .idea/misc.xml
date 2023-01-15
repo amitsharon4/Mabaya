@@ -9,7 +9,11 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/api-ext/pom.xml" />
+        <option value="$PROJECT_DIR$/api-int/pom.xml" />
+        <option value="$PROJECT_DIR$/business-logic/pom.xml" />
         <option value="$PROJECT_DIR$/impl/pom.xml" />
+        <option value="$PROJECT_DIR$/rest/pom.xml" />
       </set>
     </option>
   </component>
