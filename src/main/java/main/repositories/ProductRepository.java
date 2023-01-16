@@ -1,23 +1,24 @@
 package main.repositories;
+
 import main.entities.Product;
+import main.projections.ProductIdOnly;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface ProductRepository extends JpaRepository<Product, String> {
     @Query(
-            value = "SELECT p.SerialNumber From Products p " +
-                    "INNER JOIN CampaignProduct r ON r.SerialNumber=p.SerialNumber " +
-                    "INNER JOIN Campaigns c ON c.CampaignId=r.CampaignId " +
-                    "Where p.Category=\":category\" " +
-                    "AND c.StartDate BETWEEN \":startDate\" AND \":endDate\" " +
-                    "Group BY p.SerialNumber " +
-                    "ORDER BY MAX(c.Bid) DESC " +
-                    "LIMIT 1",
+            value = "SELECT p.SerialNumber\n" +
+                    "From Products p\n" +
+                    "INNER JOIN CampaignProduct r ON r.SerialNumber=p.SerialNumber\n" +
+                    "INNER JOIN Campaigns c ON c.CampaignId=r.CampaignId\n" +
+                    "Where p.Category= :vino\n" +
+                    "AND c.StartDate BETWEEN :startDate AND :endDate\n" +
+                    "Group BY p.SerialNumber\n" +
+                    "ORDER BY MAX(c.Bid) DESC\n" +
+                    "LIMIT 1\n",
             nativeQuery = true)
-    List<String> getProductToPromote(@Param("startDate") String startDate,
-                                     @Param("endDate") String endDate,
-                                     @Param("category") String category);
+    ProductIdOnly getProductToPromote(@Param("startDate") String startDate,
+                                            @Param("endDate") String endDate,
+                                            @Param("vino") String category);
 }

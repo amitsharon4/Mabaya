@@ -2,20 +2,17 @@ package main.services;
 
 import main.entities.Campaign;
 import main.entities.CampaignProduct;
-import main.entities.Product;
-import main.enums.ProductCategories;
 import main.exceptions.ProductsNotFoundException;
+import main.projections.ProductIdOnly;
 import main.repositories.CampaignProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import main.repositories.CampaignRepository;
 import main.repositories.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.time.LocalTime.now;
 
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
@@ -44,16 +41,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public String serveAd(String category){
-        String currentDate =  LocalDate.now().minusDays(1).toString();
+        String endDate =  LocalDate.now().minusDays(1).toString();
         String startDate = LocalDate.now().minusDays(10).toString();
         try {
-            List<String> res = productRepo.getProductToPromote(startDate, currentDate, category);
-            System.out.println(res);
+            ProductIdOnly queryResult = productRepo.getProductToPromote(startDate, endDate, category);
+            return queryResult.getSerialNumber();
         }
-        catch (Exception e){
-            int i = 3;
+        catch(Exception e){
+            return null;
         }
-        return null;
     }
 
 

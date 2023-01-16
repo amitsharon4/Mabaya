@@ -1,14 +1,10 @@
 package main.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.util.StringUtils;
 import jakarta.validation.Valid;
-import main.entities.Campaign;
-import main.entities.Product;
 import main.enums.ProductCategories;
-import main.exceptions.ProductsNotFoundException;
-import main.requests.CreateCampaignRequest;
 import main.requests.ServeAdRequest;
-import main.responses.CreateCampaignResponse;
+import main.responses.ServeAdResponse;
 import main.services.AdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,26 +20,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class AdController {
     private final AdvertisementService service;
-    private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     public AdController(AdvertisementService service){
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<CreateCampaignResponse> serveAd(@Valid @RequestBody ServeAdRequest request){
-        //validation?
+    public ResponseEntity<ServeAdResponse> serveAd(@Valid @RequestBody ServeAdRequest request){
+        try{
+            ProductCategories.valueOf(request.getCategory().toUpperCase());
+        }
+        catch(IllegalArgumentException exception){
+            return ServeAdResponse.serveAdErrorResponse("This Category does not exist", HttpStatus.BAD_REQUEST);
+        }
         try {
-            ProductCategories category = ProductCategories.valueOf(request.getCategory().toUpperCase()); //make sure to catch this error
             String adResult = service.serveAd(request.getCategory());
-            System.out.println(adResult);
+            if(!StringUtils.isNullOrEmpty(adResult)){
+                return new ResponseEntity<>(new ServeAdResponse(adResult), HttpStatus.OK);
+            }
+            return ServeAdResponse.serveAdErrorResponse("No qualifying product to promote", HttpStatus.NOT_FOUND);
         }
-        //catch(ProductsNotFoundException exception){
-         //   return CreateCampaignResponse.createErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
-       // }
         catch(Exception e){
-            return CreateCampaignResponse.createErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ServeAdResponse.serveAdErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
 }
