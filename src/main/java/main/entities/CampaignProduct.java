@@ -7,24 +7,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "Campaigns")
+@Table(name = "CampaignProduct")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Campaign {
+@IdClass(CampaignProduct.class)
+public class CampaignProduct implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "CampaignId")
     private Long campaignId;
-    @Column(name= "Name")
-    private String name;
-    @Column(name= "StartDate")
-    private String startDate;
-    @Column(name= "Bid")
-    private float bid;
+    @Id
+    @Column(name= "SerialNumber")
+    private String serialNumber;
 }
